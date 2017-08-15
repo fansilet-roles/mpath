@@ -17,14 +17,16 @@ Role Variables
  iscsint is the initiator name
  iscsint: iqn.1994-05.com.redhat:47c98423c167
  initiator can be an array like:
+ ```
  iscsint:
    - iqn.1994-05.com.redhat:47c98423c167
    - iqn.1994-05.com.redhat:47c98423c167-2
    - iqn.1994-05.com.redhat:47c98423c167-3
-
+```
  mpathip is the target ipaddress
+ ```
  mpathip: 10.150.10.20
-
+```
  filesystem: default setted to ext4 change to whatever you want.
  Check supported filesystems for ansible mount module.
 
@@ -34,11 +36,12 @@ Role Variables
 
  wwid is the alias name for a device
  syntax must be:
+ ```
  wwid:
    - { id: '360009827346', alias: 'mylun0' }
    - { id: '360782378662', alias: 'mylun1' }
  ...
-
+```
  packs is the list of the packages to use iscsi multipath on
  centos 7. This role at this moment only will work on centos7+
  with systemd
@@ -47,11 +50,12 @@ Role Variables
  credetials must be adjusted on you playbook with your login
  and password e.g.
 
+```
  credentials:
    - name: "My Credentials"
      login: mylogin
      pass: mypassword
-
+```
  !WARNING!
  login and password can no be defined with inside quotation marks " or single quotes '
 
@@ -66,6 +70,7 @@ Example Playbook
 
 Here is a sample of playbook to install and mount multipath device:
 
+```
 - name: "Deploy | Running isca0.mpath role"
   hosts: somehost
   become: yes
@@ -82,12 +87,14 @@ Here is a sample of playbook to install and mount multipath device:
       - { id: '3600a0980383888835645961', alias: 'blk' }
   roles:
     - mpath
+```
 
 If you want search a group of devices and umount the multipath before mount
 you can set a playbook to umount then run a playbook to mount.
 
 Here is a sample to umount a storage:
 
+```
 - name: "Deploy | Running isca0.mpath role"
   hosts: groupofhosts
   become: yes
@@ -98,6 +105,7 @@ Here is a sample to umount a storage:
       - { id: '3600a098038303631a35645961', alias: 'blk' }
   roles:
     - mpath
+```
 
 As you can see just setting map to false the role will only perform the umount
 action.
