@@ -1,0 +1,68 @@
+---
+# defaults file for mpath
+#
+
+# === General Vars Must be seted on yout playbook
+# e.g.:
+# iscsint is the initiator name
+# iscsint: iqn.1994-05.com.redhat:47c98423c167
+# initiator can be an array like:
+# iscsint:
+#   - iqn.1994-05.com.redhat:47c98423c167
+#   - iqn.1994-05.com.redhat:47c98423c167-2
+#   - iqn.1994-05.com.redhat:47c98423c167-3
+#
+# mpathip is the target ipaddress
+# mpathip: 10.150.70.14
+#
+# filesystem: default setted to ext4 change to whatever you want.
+# Check supported filesystems for ansible mount module.
+#
+# map: true means all installation and confs task will be run
+# if you set to false the device mapper on hosts will be unmounted
+# but the config files will remain, less fstab.
+#
+# wwid is the alias name for a device
+# syntax must be:
+# wwid:
+#   - { id: '360009827346', alias: 'mylun0' }
+#   - { id: '360782378662', alias: 'mylun1' }
+# ...
+#
+# packs is the list of the packages to use iscsi multipath on
+# centos 7. This role at this moment only will work on centos7+
+# with systemd
+#
+#
+# credetials must be adjusted on you playbook with your login
+# and password e.g.
+#
+# credentials:
+#   - name: "My Credentials"
+#     login: mylogin
+#     pass: mypassword
+#
+# !WARNING!
+# login and password can no be defined with inside quotation marks " or single quotes '
+#
+
+# === Adjust this vars on your Playbook ===
+
+iscsint: 
+mpathip:
+filesystem: ext4
+map: true
+
+wwid:
+  - { id: '367863257267', alias: 'myblk' }
+
+packs:
+  - iscsi-initiator-utils
+  - device-mapper-multipath
+  - lsof
+
+
+credentials:
+  - name: "MultiPath Authentication"
+    login: "user"
+    pass: "mypassword"

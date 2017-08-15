@@ -1,0 +1,14 @@
+---
+# tasks file for mpath
+
+- include: install.yml
+- include: confs.yml
+
+# test commands iscsiadm
+- include: iscsiadm.yml
+
+# --- Deploying session ---
+- include: mount.yml
+- include: umount.yml
+
+

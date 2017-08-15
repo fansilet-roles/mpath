@@ -1,0 +1,39 @@
+---
+# === Unmount ===
+
+  - name: " Deploy  | Releasing multipath "
+    script: "mpath.sh release {{ devmap }}/{{ item.id }}"
+    register: released
+    when: map == false
+    with_items: "{{ wwid }}"
+
+  - name: " Deploy | lazy unmount "
+    command: "umount -l {{ devmap }}/{{ item.id }}"
+    register: lazyed
+    with_items: "{{ wwid }}"
+    when: 
+      - map == false
+      - released
+
+  - name: " Deploy | Clearing fstab "
+    mount:
+      path: "/mnt/{{ item.alias }}"
+      src: "{{ devmap }}/{{ item.id }}"
+      fstype: "{{ filesystem }}"
+      state: absent
+    with_items: "{{ wwid }}"
+    when:
+      - map == false
+      - released
+
+  - name: " Deploy | flush multipath "
+    command: "multipath -f {{ devmap }}/{{ item.id }}"
+    register: flushed
+    with_items: "{{ wwid }}"
+    when:
+      - map == false
+      - released
+      - lazyed
+
+
+

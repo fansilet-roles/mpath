@@ -1,0 +1,20 @@
+---
+# === Mount ===
+
+  - name: " Deploy | remount multipath "
+    command: "multipath -r"
+    register: repath
+    when: 
+      - map
+
+  - name: " Deploy | Mounting blockdevice "
+    mount:
+      path: "/mnt/{{ item.alias }}"
+      src: "{{ devmap }}/{{ item.id }}"
+      state: mounted
+      fstype: "{{ filesystem }}"
+    with_items: "{{ wwid }}"
+    when:
+      - map 
+      - repath
+

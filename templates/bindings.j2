@@ -1,0 +1,10 @@
+{{ "Multipath bindings, Version : 1.0" | comment }}
+{{ "NOTE: this file is automatically maintained by the multipath program." | comment }}
+{{ "You should not need to edit this file in normal circumstances." | comment }}
+{{ "Format : "| comment }}
+{{ "alias wwid" | comment  }}
+{{ ansible_managed | comment }}
+
+{% for line in wwid %}
+{{ line.alias }} {{ line.id }}
+{% endfor %}

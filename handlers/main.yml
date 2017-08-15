@@ -1,0 +1,30 @@
+---
+# handlers file for mpath
+#
+# === Starting MultiPathd ===
+  - name: " Daemon | Staring multipathd "
+    service:
+      name: multipathd
+      state: started
+      enabled: yes
+    listen: "start multipathd"
+    register: mpathStarted
+
+# === Starting iscsi ===
+  - name: " Daemon | Staring iscsi "
+    service:
+      name: iscsi
+      state: started
+      enabled: yes
+    listen: "start iscsi"
+    register: iscsiStarted
+
+# === Starting iscsid ===
+  - name: " Daemon | Staring iscsid "
+    service:
+      name: iscsid
+      state: started
+      enabled: yes
+    listen: "start iscsid"
+    register: iscsidStarted
+

@@ -1,0 +1,7 @@
+---
+# vars file for mpath
+
+iscsintpw: "/etc/iscsi/initiatorname.iscsi"
+iscsidpw: "/etc/iscsi/iscsid.conf"
+filebindings: "/etc/multipath/bindings"
+devmap: "/dev/mapper"

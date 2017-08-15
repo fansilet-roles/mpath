@@ -1,0 +1,10 @@
+---
+# === Installing Packages ===
+
+  - name: " Setup | Installing Packages "
+    yum:
+      name: "{{ item }}"
+      state: present
+    with_items:
+      - "{{ packs }}"
+    when: map

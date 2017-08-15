@@ -1,0 +1,65 @@
+---
+# === Configuring MultiPath ===
+
+  - name: " Setup | Deploying multipath config file "
+    copy:
+      src: multipath.conf
+      dest: /etc/multipath.conf
+      owner: root
+      group: root
+      mode: 0644
+    when: map
+ 
+  - name: " Setup | Seting alias names on bindings "
+    template:
+      src: "bindings.j2"
+      dest: "{{ filebindings }}"
+      mode: 0600
+      owner: root
+      group: root
+      backup: yes
+    when: map
+
+  - name: " Setup | Loading Kernel Module "
+    modprobe:
+      name: dm-multipath
+      state: present
+    when: map
+
+  - name: " Setup | Loading mpath "
+    shell: "multipathd -l"
+    notify: [ 'start multipathd' ]
+    when: map
+
+
+# === Configuring iscsi ===
+
+  - name: " Setup | Configuring initiator.iscsi "
+    template:
+      src: "iscsint.j2"
+      dest: "{{ iscsintpw }}"
+      mode: 0644
+      owner: root
+      group: root
+      backup: yes
+    when: map
+
+  - name: " Setup | Configuring iscsid "
+    blockinfile:
+      path: "{{ iscsidpw }}"
+      state: present
+      backup: yes
+      marker: "# {mark} === ANSIBLE MANAGED BLOCK ==="
+      insertafter: "# CHAP Settings"
+      content: |
+        node.session.auth.authmethod = CHAP
+        node.session.auth.username = {{ item.login }}
+        node.session.auth.password = {{ item.pass }}
+        discovery.sendtargets.auth.authmethod = CHAP
+        discovery.sendtargets.auth.username = {{ item.login }}
+        discovery.sendtargets.auth.password = {{ item.pass }}
+    with_items: "{{ credentials }}"
+    notify: 
+      - "start iscsi"
+      - "start iscsid"
+    when: map

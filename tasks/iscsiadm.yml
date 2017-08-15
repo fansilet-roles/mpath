@@ -1,0 +1,18 @@
+---
+# === Discovery ===
+
+  - name: " Test | Discovering multipath "
+    shell: "(iscsiadm -m discovery -t sendtargets -p {{ mpathip }})"
+    register: discovered
+    when: map
+
+
+# === AutoLogin ===
+
+  - name: " Init | AutoLogin on initiator "
+    shell: "(iscsiadm -m node -L automatic)"
+    when:
+      - map
+      - discovered
+
+

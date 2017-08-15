@@ -1,0 +1,6 @@
+{{ ansible_managed | comment }}
+{{ "InitiatorName=iqn.1994-05.com.redhat:47c98423c167 (sample)" | comment }}
+
+{% for line in iscsint %}
+InitiatorName={{ line }}
+{% endfor %}

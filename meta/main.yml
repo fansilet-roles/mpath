@@ -1,0 +1,18 @@
+galaxy_info:
+  author: isca
+  description: "Manage iscsi blockstorage with multipath on softlayer like a boss"
+  company: "isca.space"
+  license: "license (GPLv2)"
+  min_ansible_version: 2.1
+  platforms:
+    - name: RHEL
+      versions:
+        - 7
+  galaxy_tags:
+    - iscsi
+    - blockstorage
+    - softlayer
+    - centos
+    - multipath
+    - mount
+    - umount
