@@ -28,3 +28,30 @@
     listen: "start iscsid"
     register: iscsidStarted
 
+# === Stopping iscsid ===
+  - name: " Daemon | Stopping iscsid "
+    service:
+      name: iscsid
+      state: stopped
+      enabled: no
+    listen: "stop iscsid"
+    register: iscsidStoped
+
+# === Stoping iscsi ===
+  - name: " Daemon | Stopping iscsi "
+    service:
+      name: iscsi
+      state: stopped
+      enabled: no
+    listen: "stop iscsi"
+    register: iscsiStopped
+
+# === Stopping multipathd ===
+  - name: " Daemon | Stopping multipathd "
+    service:
+      name: multipathd
+      state: stopped
+      enabled: no
+    listen: "stop multipathd"
+    register: mpathStopped
+

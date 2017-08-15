@@ -14,6 +14,9 @@
       state: mounted
       fstype: "{{ filesystem }}"
     with_items: "{{ wwid }}"
+    notify: 
+      - "start iscsi"
+      - "start iscsid"
     when:
       - map 
       - repath

@@ -59,7 +59,4 @@
         discovery.sendtargets.auth.username = {{ item.login }}
         discovery.sendtargets.auth.password = {{ item.pass }}
     with_items: "{{ credentials }}"
-    notify: 
-      - "start iscsi"
-      - "start iscsid"
     when: map
