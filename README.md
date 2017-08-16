@@ -24,7 +24,7 @@ The logic of this role is:
   ##### During unmounting
 
   * Lsof pid's of device "/dev/mapper/mydeviceid"
-  * If device are in use, *force* and release the device
+  * If device are in use, **force** and release the device
   * Unmount device in lazy way _(umount -l device)_
   * Unmount and remove fstab entries
   * Flush multipath with (multipath -f device)
@@ -39,9 +39,9 @@ need the full initiator iqn path, and the iscsi mapper id. _like: /dev/mapper/36
 Role Variables
 --------------
 
-Here is the variables you will need to manager on your playbook.
+This are the variables you will need to adjust on your playbook.
 
- *iscsint* is the initiator iqn name.
+ **iscsint** is the initiator iqn name.
  e.g.:
 
  ```
@@ -57,22 +57,22 @@ Here is the variables you will need to manager on your playbook.
    - iqn.1994-05.com.redhat:47c98423c167-3
 ```
 
- *mpathip* is the target ipaddress
+ **mpathip** is the target ipaddress
 
 ```
  mpathip: 10.150.10.20
 ```
 
- *filesystem*: is default setted to ext4, change this to whatever you want.
+ **filesystem**: is default setted to ext4, change this to whatever you want.
  _Check supported filesystems on ansible mount module._
 
- *map*: if setted to true, means all installation and config tasks will run.
+ **map**: if setted to true, means all installation and config tasks will run.
  If you set to false, the device mapper will be unmounted, and follow
  the unmount flux.
 
- *wwid* is the alias for multipath device, and will be used to configure bindings file.
- This variable is *very important*, it also will be used on whole role to mount and unmount device
- based on *id*.
+ **wwid** is the alias for multipath device, and will be used to configure bindings file.
+ This variable is **very important**, it also will be used on whole role to mount and unmount device
+ based on **id**.
 
  syntax must be:
  ```
@@ -81,9 +81,9 @@ Here is the variables you will need to manager on your playbook.
    - { id: '360782378662', alias: 'mylun1' }
  ...
 ```
- *packs* is the list of packages to install. It will install iscsi, multipath and lsof.
+ **packs** is the list of packages to install. It will install iscsi, multipath and lsof.
 
- *credetials* must be adjusted on your playbook with your login and password.
+ **credetials** must be adjusted on your playbook with your login and password.
   e.g.
 
 ```
@@ -92,8 +92,8 @@ Here is the variables you will need to manager on your playbook.
      login: mylogin
      pass: mypassword
 ```
- *WARNING!*
- *login* and *password* must be declared without quotation marks " or single quotes '.
+ **WARNING!**
+ **login** and **password** must be declared without quotation marks " or single quotes '.
 
 
 Dependencies
@@ -143,7 +143,7 @@ Here is a sample of unmount playbook:
     - mpath
 ```
 
-As you can see, just set *map* to _false_, and the role will only perform the unmount action. 
+As you can see, just set **map** to _false_, and the role will only perform the unmount action. 
 :simple_smile:
 
 
