@@ -1,40 +1,79 @@
 Mpath
 =========
 
-Install, mount or umount iscsi blockstorages with multipath.
-This role are tested and worked fine on softlayer blockstorages, but also
-work with other setups with iscsi multipath storages.
+Install, mount or unmount iscsi blockstorages with multipath.
+This have been tested on softlayer blockstorages. But will also
+work on other setups, with iscsi multipath storages.
+
+The logic of this role is:
+
+  ##### During installing
+
+  * Install packages dependencies to use multipath and iscsi
+  * Configure /etc/multipath.conf
+  * Probe dm-multipath kernel module
+  * Enable and start multipathd
+  * List with (multipath -l) to trigger the multipathd handler
+  * Configure /etc/iscsi/initiatorname.iscsi
+  * Edit chap authentication on /etc/iscsi/iscsid.conf
+  * Create an alias on /etc/multipath/bindings
+  * Mount multipath "/dev/mapper/mydeviceid" on "/mnt/myaliasname"
+  * Trigger iscsi and iscsid to start and enable
+  * Place the entries on /etc/fstab
+
+  ##### During unmounting
+
+  * Lsof pid's of device "/dev/mapper/mydeviceid"
+  * If device are in use, *force* and release the device
+  * Unmount device in lazy way _(umount -l device)_
+  * Unmount and remove fstab entries
+  * Flush multipath with (multipath -f device)
+
 
 Requirements
 ------------
 
-You need to have a iscsi multipath blockstorage and login and password for the iqn.
-This role also will need de full iqn path and the isci mapper id like: /dev/mapper/3600....
+You will need a iscsi multipath blockstorage, the login and password for the iqn. You will also
+need the full initiator iqn path, and the iscsi mapper id. _like: /dev/mapper/3600..._
 
 Role Variables
 --------------
 
- iscsint is the initiator name
- iscsint: iqn.1994-05.com.redhat:47c98423c167
- initiator can be an array like:
+Here is the variables you will need to manager on your playbook.
+
+ *iscsint* is the initiator iqn name.
+ e.g.:
+
  ```
+ iscsint: iqn.1994-05.com.redhat:47c98423c167
+ ```
+
+ you can set multiples initiators as an array:
+
+```
  iscsint:
    - iqn.1994-05.com.redhat:47c98423c167
    - iqn.1994-05.com.redhat:47c98423c167-2
    - iqn.1994-05.com.redhat:47c98423c167-3
 ```
- mpathip is the target ipaddress
- ```
+
+ *mpathip* is the target ipaddress
+
+```
  mpathip: 10.150.10.20
 ```
- filesystem: default setted to ext4 change to whatever you want.
- Check supported filesystems for ansible mount module.
 
- map: true means all installation and confs task will be run
- if you set to false the device mapper on hosts will be unmounted
- but the config files will remain, less fstab.
+ *filesystem*: is default setted to ext4, change this to whatever you want.
+ _Check supported filesystems on ansible mount module._
 
- wwid is the alias name for a device
+ *map*: if setted to true, means all installation and config tasks will run.
+ If you set to false, the device mapper will be unmounted, and follow
+ the unmount flux.
+
+ *wwid* is the alias for multipath device, and will be used to configure bindings file.
+ This variable is *very important*, it also will be used on whole role to mount and unmount device
+ based on *id*.
+
  syntax must be:
  ```
  wwid:
@@ -42,13 +81,10 @@ Role Variables
    - { id: '360782378662', alias: 'mylun1' }
  ...
 ```
- packs is the list of the packages to use iscsi multipath on
- centos 7. This role at this moment only will work on centos7+
- with systemd
+ *packs* is the list of packages to install. It will install iscsi, multipath and lsof.
 
-
- credetials must be adjusted on you playbook with your login
- and password e.g.
+ *credetials* must be adjusted on your playbook with your login and password.
+  e.g.
 
 ```
  credentials:
@@ -56,8 +92,8 @@ Role Variables
      login: mylogin
      pass: mypassword
 ```
- !WARNING!
- login and password can no be defined with inside quotation marks " or single quotes '
+ *WARNING!*
+ *login* and *password* must be declared without quotation marks " or single quotes '.
 
 
 Dependencies
@@ -68,7 +104,7 @@ None
 Example Playbook
 ----------------
 
-Here is a sample of playbook to install and mount multipath device:
+Here is a playbook sample. This playbook will  install and mount multipath device on somehost:
 
 ```
 - name: "Deploy | Running isca0.mpath role"
@@ -89,10 +125,10 @@ Here is a sample of playbook to install and mount multipath device:
     - mpath
 ```
 
-If you want search a group of devices and umount the multipath before mount
-you can set a playbook to umount then run a playbook to mount.
+If you want unmount a device on a group of hosts, and then mount on a exclusive host. You can
+run firstly a unmount playbook and then a "install/mount" playbook.
 
-Here is a sample to umount a storage:
+Here is a sample of unmount playbook:
 
 ```
 - name: "Deploy | Running isca0.mpath role"
@@ -107,15 +143,17 @@ Here is a sample to umount a storage:
     - mpath
 ```
 
-As you can see just setting map to false the role will only perform the umount
-action.
+As you can see, just set *map* to _false_, and the role will only perform the unmount action. 
+:simple_smile:
+
 
 License
 -------
 
-GPLv2
+LGPL-3.0
 
 Author Information
 ------------------
 
-This role was create in 2017 by [Igor Brandao](https://isca.space)
+This role was create in 2017 by [isca](https://isca.space)
+

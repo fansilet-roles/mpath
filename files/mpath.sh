@@ -8,20 +8,20 @@
 #
 #
 
-set -x
-set -e
+#set -x
+#set -e
 
 error=
 
 if [ "$#" -lt "2" ];then
-  echo "Insuficient arguments"
-  erro=50
-  exit $erro
+  echo "Insufficient arguments"
+  error=50
+  exit $error
 fi
 
 mpathbin=$(which multipath)
 if [ "$?" != "0" ];then
-  echo "Multipath not installed"
+  echo "multipath not found"
   export error=100
   exit $error
 fi
@@ -32,7 +32,6 @@ if [ "$?" != "0" ];then
   export error=101
   exit $error
 fi
-
 
 #wwids="/etc/multipath/wwids"
 #if [ -e "$wwids" ];then
@@ -57,9 +56,9 @@ export devsof="$2"
 release_mount(){
 
   if [ ! -e "$devsof" ];then
-    echo "No such device found"
-    erro=200
-    exit $erro
+    echo "Device not found"
+    error=200
+    exit $error
   fi
 
   for pids in $(lsof "$devsof"|awk '{print $2}'|grep -vi pid);do

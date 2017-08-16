@@ -5,15 +5,17 @@
     script: "mpath.sh release {{ devmap }}/{{ item.id }}"
     register: released
     when: map == false
+    ignore_errors: true
     with_items: "{{ wwid }}"
 
   - name: " Deploy | lazy unmount "
     command: "umount -l {{ devmap }}/{{ item.id }}"
     register: lazyed
     with_items: "{{ wwid }}"
+    ignore_errors: true
     when: 
       - map == false
-      - released
+      - released|succeeded
 
   - name: " Deploy | Clearing fstab "
     mount:
@@ -24,7 +26,7 @@
     with_items: "{{ wwid }}"
     when:
       - map == false
-      - released
+      - released|succeeded
 
   - name: " Deploy | flush multipath "
     command: "multipath -f {{ devmap }}/{{ item.id }}"
@@ -36,7 +38,13 @@
       - "stop multipathd"
     when:
       - map == false
-      - released
-      - lazyed
+      - released|succeeded
+      - lazyed|succeeded
 
-
+  - name: " Result | unmount status "
+    #fail:
+    debug:
+      msg: "There is no device to unmount here"
+    when:
+      - map == false
+      - released|failed 
