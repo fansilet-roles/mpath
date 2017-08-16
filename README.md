@@ -63,17 +63,16 @@ This are the variables you will need to adjust on your playbook.
  mpathip: 10.150.10.20
 ```
 
- **filesystem**: is default setted to ext4, change this to whatever you want.
- _Check supported filesystems on ansible mount module._
-
- **map**: if setted to true, means all installation and config tasks will run.
- If you set to false, the device mapper will be unmounted, and follow
- the unmount flux.
-
- **wwid** is the alias for multipath device, and will be used to configure bindings file.
- This variable is **very important**, it also will be used on whole role to mount and unmount device
- based on **id**.
-
+ **filesystem**: is default setted to ext4, change this to whatever you want.  
+ _Check supported filesystems on ansible mount module._  
+  
+ **map**: if setted to true, means all installation and config tasks will run.  
+ If you set to false, the device mapper will be unmounted, and follow the unmount flux.  
+  
+ **wwid** is the alias for multipath device, and will be used to configure bindings file.  
+ This variable is **very important**, it also will be used on whole role to mount and unmount device  
+ based on **id**.  
+  
  syntax must be:
  ```
  wwid:
@@ -82,9 +81,9 @@ This are the variables you will need to adjust on your playbook.
  ...
 ```
  **packs** is the list of packages to install. It will install iscsi, multipath and lsof.
-
- **credetials** must be adjusted on your playbook with your login and password.
-  e.g.
+  
+ **credetials** must be adjusted on your playbook with your login and password.  
+  e.g.  
 
 ```
  credentials:
@@ -92,8 +91,8 @@ This are the variables you will need to adjust on your playbook.
      login: mylogin
      pass: mypassword
 ```
- **WARNING!**
- **login** and **password** must be declared without quotation marks " or single quotes '.
+ **WARNING!**  
+ **login** and **password** must be declared without quotation marks " or single quotes '.  
 
 
 Dependencies
@@ -126,8 +125,8 @@ Here is a playbook sample. This playbook will  install and mount multipath devic
 ```
 
 If you want unmount a device on a group of hosts, and then mount on a exclusive host. You can
-run firstly a unmount playbook and then a "install/mount" playbook.
-
+run firstly a unmount playbook and then a "install/mount" playbook.  
+  
 Here is a sample of unmount playbook:
 
 ```
@@ -149,7 +148,7 @@ As you can see, just set **map** to _false_, and the role will only perform the 
 To-do
 ------
 
-[ ] Add support to automount
+  - [ ] Add support to automount
 
 License
 -------
