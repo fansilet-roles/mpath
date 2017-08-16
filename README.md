@@ -146,6 +146,10 @@ Here is a sample of unmount playbook:
 As you can see, just set **map** to _false_, and the role will only perform the unmount action. 
 :simple_smile:
 
+To-do
+------
+
+[ ] Add support to automount
 
 License
 -------
