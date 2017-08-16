@@ -142,8 +142,7 @@ Here is a sample of unmount playbook:
     - mpath
 ```
 
-As you can see, just set **map** to _false_, and the role will only perform the unmount action. 
-:simple_smile:
+As you can see, just set **map** to _false_, make the role to perform only the unmount tasks. :wink:
 
 To-do
 ------
