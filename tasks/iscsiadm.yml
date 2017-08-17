@@ -11,8 +11,30 @@
 
   - name: " Init | AutoLogin on initiator "
     shell: "(iscsiadm -m node -L automatic)"
+    register: autologin
+    ignore_errors: true
     when:
       - map
-      - discovered
+      - discovered|succeeded
 
+
+# === Normal login ===
+
+  - name: " Init | Login on portal "
+    shell: "(iscsiadm -m node -p {{ mpathip }} -l)"
+    register: loginmanual
+    when:
+      - map
+      - discovered|succeeded
+      - autologin|failed
+
+# === Test commands ===
+
+  - name: " Status | showing success login "
+    shell: "(iscsiadm -m node -p {{ mpathip }} -s)"
+    register: status
+    when:
+      - map
+      - discovered|succeeded
+      - ( autologin|succeeded or loginmanual|succeeded )
 

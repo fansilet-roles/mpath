@@ -1,21 +1,38 @@
 ---
 # === Unmount ===
 
-  - name: " Deploy  | Releasing multipath "
+  - name: " Deploy  | Releasing multipath by id "
     script: "mpath.sh release {{ devmap }}/{{ item.id }}"
     register: released
     when: map == false
     ignore_errors: true
     with_items: "{{ wwid }}"
 
+  - name: " Deploy  | Releasing multipath by alias "
+    script: "mpath.sh release {{ devmap }}/{{ item.alias }}"
+    register: Aliasreleased
+    ignore_errors: true
+    with_items: "{{ wwid }}"
+    when:
+      - map == false
+      - released|failed
+
   - name: " Deploy | lazy unmount "
     command: "umount -l {{ devmap }}/{{ item.id }}"
     register: lazyed
     with_items: "{{ wwid }}"
-    ignore_errors: true
     when: 
       - map == false
       - released|succeeded
+
+  - name: " Deploy | lazy unmount by alias "
+    command: "umount -l {{ devmap }}/{{ item.alias }}"
+    register: Aliaslazyed
+    with_items: "{{ wwid }}"
+    when: 
+      - map == false
+      - Aliasreleased|succeeded
+      - lazyed|failed
 
   - name: " Deploy | Clearing fstab "
     mount:
@@ -23,23 +40,54 @@
       src: "{{ devmap }}/{{ item.id }}"
       fstype: "{{ filesystem }}"
       state: absent
+    register: tabclear
     with_items: "{{ wwid }}"
     when:
       - map == false
       - released|succeeded
 
+  - name: " Deploy | Clearing fstab by alias "
+    mount:
+      path: "/mnt/{{ item.alias }}"
+      src: "{{ devmap }}/{{ item.alias }}"
+      fstype: "{{ filesystem }}"
+      state: absent
+    register: Aliastabclear
+    with_items: "{{ wwid }}"
+    when:
+      - map == false
+      - Aliasreleased|succeeded
+      - tabclear|failed
+
   - name: " Deploy | flush multipath "
     command: "multipath -f {{ devmap }}/{{ item.id }}"
     register: flushed
     with_items: "{{ wwid }}"
+    when:
+      - map == false
+      - released|succeeded
+      - (lazyed|succeeded or tabclear|succeeded)
+
+  - name: " Deploy | flush multipath by alias "
+    command: "multipath -f {{ devmap }}/{{ item.alias }}"
+    register: Aliasflushed
+    ignore_errors: true
+    with_items: "{{ wwid }}"
+    when:
+      - map == false
+      - Aliasreleased|succeeded
+      - (Aliaslazyed|succeeded or Aliastabclear|succeeded)
+
+  - name: " Deploy | Logging out of portal session "
+    command: "iscsiadm -m node -p {{ mpathip }} -u"
+    register: logout
     notify:
       - "stop iscsid"
       - "stop iscsi"
       - "stop multipathd"
     when:
       - map == false
-      - released|succeeded
-      - lazyed|succeeded
+      - (flushed|succeeded or Aliasflushed|succeeded)
 
   - name: " Result | unmount status "
     #fail:
@@ -47,4 +95,4 @@
       msg: "There is no device to unmount here"
     when:
       - map == false
-      - released|failed 
+      - ( released|failed or Aliasreleased|failed )

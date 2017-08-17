@@ -16,6 +16,7 @@ The logic of this role is:
   * List with (multipath -l) to trigger the multipathd handler
   * Configure /etc/iscsi/initiatorname.iscsi
   * Edit chap authentication on /etc/iscsi/iscsid.conf
+  * Try to autologin on portal if fails use normal login
   * Create an alias on /etc/multipath/bindings
   * Mount multipath "/dev/mapper/mydeviceid" on "/mnt/myaliasname"
   * Trigger iscsi and iscsid to start and enable
@@ -28,6 +29,8 @@ The logic of this role is:
   * Unmount device in lazy way _(umount -l device)_
   * Unmount and remove fstab entries
   * Flush multipath with (multipath -f device)
+  * Logout from session portal target
+  * Trigger handler to stop and disable iscsi,iscsid and multipathd services
 
 
 Requirements
@@ -136,6 +139,7 @@ Here is a sample of unmount playbook:
   remote_user: myuser
   vars:
     map: false
+    mpathip: "10.200.10.100"
     wwid:
       - { id: '3600a098038303631a35645961', alias: 'blk' }
   roles:

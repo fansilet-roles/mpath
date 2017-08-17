@@ -13,11 +13,28 @@
       src: "{{ devmap }}/{{ item.id }}"
       state: mounted
       fstype: "{{ filesystem }}"
+    register: blockmounted
     with_items: "{{ wwid }}"
+    ignore_errors: true
     notify: 
       - "start iscsi"
       - "start iscsid"
     when:
       - map 
-      - repath
+      - repath|succeeded
+
+  - name: " Deploy | Mounting blockdevice by alias "
+    mount:
+      path: "/mnt/{{ item.alias }}"
+      src: "{{ devmap }}/{{ item.alias }}"
+      state: mounted
+      fstype: "{{ filesystem }}"
+    with_items: "{{ wwid }}"
+    notify: 
+      - "start iscsi"
+      - "start iscsid"
+    when:
+      - map
+      - repath|succeeded
+      - blockmounted|failed
 
